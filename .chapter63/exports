@@ -1,0 +1,10 @@
+# These are my custom variables that I need to set and use for various use cases
+
+# This one is for multiline support for my typewritten theme for oh my zsh
+export TYPEWRITTEN_MULTILINE=true
+
+
+# For nodejs and npm crap - so I don't have to sudo to install packages
+export NPM_PACKAGES="${HOME}/.npm-packages"
+
+export PATH="$PATH:$NPM_PACKAGES/bin"

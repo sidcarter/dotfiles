@@ -1,0 +1,9 @@
+# Some basic stuff that must absolutely be created
+
+# We need those local directories so I can install npm modules locally and not have to use sudo
+if [[ ! -d "${HOME}/.npm-packages" ]] 
+then
+	echo "NPM packages folder not found. Creating and configuring npm."
+	mkdir "${HOME}/.npm-packages"
+	npm config set prefix "${HOME}/.npm-packages"
+fi
