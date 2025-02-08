@@ -94,18 +94,47 @@ if ! shopt -oq posix; then
 		. /usr/local/etc/bash_completion
 	fi
 fi
+
 if [[ -d /etc/bash_completion.d/ ]]; then
 	for file in /etc/bash_completion.d/* ; do
-		# shellcheck source=/dev/null
-		source "$file"
+		if [[ -n $BASHRC_BENCH ]]; then
+			TIMEFORMAT="$file: %R"
+			# shellcheck source=/dev/null
+			time source "$file"
+			unset TIMEFORMAT
+		else
+			# shellcheck source=/dev/null
+			source "$file"
+		fi
 	done
 fi
 
-# We do this before the following so that all the paths work.
-for file in ~/.{bash_prompt,aliases,functions,path,dockerfunc,extra,exports}; do
-	if [[ -r "$file" ]] && [[ -f "$file" ]]; then
+hbfile="/opt/homebrew/etc/profile.d/bash_completion.sh"
+if [[ -f "$hbfile" ]]; then
+	if [[ -n $BASHRC_BENCH ]]; then
+		TIMEFORMAT="$hbfile: %R"
 		# shellcheck source=/dev/null
-		source "$file"
+		time . "$hbfile"
+		unset TIMEFORMAT
+	else
+		# shellcheck source=/dev/null
+		. "$hbfile"
+	fi
+fi
+unset hbfile
+
+# We do this before the following so that all the paths work.
+for file in ~/.{aliases,functions,path,dockerfunc,extra,exports,bash_prompt}; do
+	if [[ -r "$file" ]] && [[ -f "$file" ]]; then
+		if [[ -n $BASHRC_BENCH ]]; then
+			TIMEFORMAT="$file: %R"
+			# shellcheck source=/dev/null
+			time source "$file"
+			unset TIMEFORMAT
+		else
+			# shellcheck source=/dev/null
+			source "$file"
+		fi
 	fi
 done
 unset file
@@ -163,15 +192,13 @@ if hash gh 2>/dev/null; then
 	eval "$(gh completion -s bash)"
 fi
 
-# get the kittycad completions
-if hash kittycad 2>/dev/null; then
-	eval "$(kittycad completion -s bash)"
+# get the zoo completions
+if hash zoo 2>/dev/null; then
+	eval "$(zoo completion -s bash)"
 fi
 
-# source travis bash completion
-if [[ -f "${HOME}/.travis/travis.sh" ]]; then
-	# shellcheck source=/dev/null
-	source "${HOME}/.travis/travis.sh"
+# get the rustup completions
+if hash rustup 2>/dev/null; then
+	eval "$(rustup completions bash)"
 fi
-
 
